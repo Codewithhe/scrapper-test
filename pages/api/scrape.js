@@ -1,6 +1,6 @@
 import dbConnect from "../../lib/mongodb";
 import Result from "../../models/Result";
-import { getResults } from "../../lib/scraper";
+import { getResults, ScrapeFetchError } from "../../lib/scraper";
 
 export default async function handler(req, res) {
 
@@ -9,14 +9,6 @@ export default async function handler(req, res) {
       await dbConnect();
 
       const data = await getResults();
-
-      if (!data) {
-
-         return res.status(500).json({
-            success: false,
-            message: "fetch failed"
-         });
-      }
 
       const save = await Result.create({
          data
@@ -29,6 +21,15 @@ export default async function handler(req, res) {
       });
 
    } catch (err) {
+
+      if (err instanceof ScrapeFetchError) {
+
+         return res.status(502).json({
+            success: false,
+            message: err.message,
+            upstreamStatus: err.upstreamStatus
+         });
+      }
 
       return res.status(500).json({
          success: false,
