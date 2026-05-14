@@ -7,11 +7,5 @@
       "maxDuration": 60,
       "regions": ["bom1"]
     }
-  },
-  "crons": [
-    {
-      "path": "/api/scrape",
-      "schedule": "10 15 * * *"
-    }
-  ]
+  }
 }
